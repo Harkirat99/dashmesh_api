@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
+require("dotenv").config;
 
-const PORT = 8000;
+const PORT = process.env.PORT;
 
 app.get('/api/get', (req, res) => {
     res.send('Hello, World from dashmesh api!');
