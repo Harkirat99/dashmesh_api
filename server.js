@@ -5,7 +5,7 @@ require("dotenv").config();
 const PORT = process.env.PORT;
 
 app.get('/api/get', (req, res) => {
-    res.send('Hello, World from dashmesh api!');
+    res.send('Hello, World from dashmesh api test!');
 });
 
 app.listen(PORT, () => {
