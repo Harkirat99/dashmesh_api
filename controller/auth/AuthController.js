@@ -2,7 +2,7 @@ const { status } = require('http-status');
 const catchAsync = require('../../utils/catchAsync');
 const { User } = require('../../model');
 const tokenService = require("../../services/token");
-
+const ApiError = require('../../utils/ApiError');
 const register = catchAsync(async (req, res) => {
     const user = await User.create(req.body);
     const tokens = await tokenService.generateAuthTokens(user);
@@ -16,8 +16,9 @@ const login = catchAsync(async (req, res) => {
         email: email
     });
     if (!user || !(await user.isPasswordMatch(password))) {
-      throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
+      throw new ApiError(status.BAD_REQUEST, 'Incorrect email or password');
     }
+    
     const tokens = await tokenService.generateAuthTokens(user);
     return res.status(200).send({ user, tokens });
 });
@@ -34,7 +35,7 @@ const refreshTokens = catchAsync(async (req, res) => {
     res.send({ ...tokens });
 
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate');
+    throw new ApiError(status.UNAUTHORIZED, 'Please authenticate');
   }
 });
 
