@@ -9,7 +9,7 @@ const index = catchAsync(async (req, res) => {
     const filter = pick(req.query, ['status']);
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const customers = await Customer.paginate(filter, options);
-    return res.status(status.FOUND).send(customers);
+    return res.status(200).send(customers);
 });
 
 const create = catchAsync(async (req, res) => {
