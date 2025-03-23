@@ -19,10 +19,8 @@ const create = catchAsync(async (req, res) => {
 });
 
 const detail = catchAsync(async (req, res) => {
-
     const { id } = req.params;
-
-    const customer = await Customer.aggregate([
+    const [ customer ] = await Customer.aggregate([
         {
             $match: {
                 _id: new ObjectId(id)
@@ -65,7 +63,6 @@ const detail = catchAsync(async (req, res) => {
             }
           }
     ]);
-
     return res.status(status.CREATED).send(customer);
 });
 
