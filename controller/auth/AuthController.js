@@ -1,8 +1,10 @@
 const { status } = require('http-status');
 const catchAsync = require('../../utils/catchAsync');
-const { User } = require('../../model');
+const { User, Token } = require('../../model');
 const tokenService = require("../../services/token");
 const ApiError = require('../../utils/ApiError');
+const { tokenTypes } = require("../../config/tokens")
+
 const register = catchAsync(async (req, res) => {
     const user = await User.create(req.body);
     const tokens = await tokenService.generateAuthTokens(user);
@@ -25,17 +27,25 @@ const login = catchAsync(async (req, res) => {
 
 const refreshTokens = catchAsync(async (req, res) => {
   try {
-    const refreshTokenDoc = await tokenService.verifyToken(refreshToken, tokenTypes.REFRESH);
-    const user = await userService.getUserById(refreshTokenDoc.user);
+    const refreshTokenDoc = await tokenService.verifyToken(req.body.refreshToken, tokenTypes.REFRESH);
+    const user = await User.findOne({
+      _id: refreshTokenDoc.user
+    });
+
     if (!user) {
       throw new Error();
     }
-    await refreshTokenDoc.remove();
+    // await refreshTokenDoc.remove();
+    await Token.deleteOne({
+      _id: refreshTokenDoc?._id
+    });
+
     const tokens = await  tokenService.generateAuthTokens(user);
     res.send({ ...tokens });
 
   } catch (error) {
-    throw new ApiError(status.UNAUTHORIZED, 'Please authenticate');
+    console.log("ERROR", error)
+    throw new ApiError(status.BAD_REQUEST, 'Please authenticate');
   }
 });
 
