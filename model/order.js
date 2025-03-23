@@ -21,7 +21,7 @@ const orderSchema = mongoose.Schema(
       type: String,
       require: true,
     },
-    quantiy: {
+    quantity: {
       type: Number,
     },
     unit: {
