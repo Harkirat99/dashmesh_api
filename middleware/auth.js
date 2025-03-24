@@ -9,7 +9,7 @@ const verifyCallback = (req, resolve, reject, requiredRights) => async (err, use
   }
   req.user = user;
 
-  if (requiredRights.length) {
+  if (requiredRights?.length) {
     const userRights = roleRights.get(user.role);
     const hasRequiredRights = requiredRights.every((requiredRight) => userRights.includes(requiredRight));
     if (!hasRequiredRights && req.params.userId !== user.id) {
@@ -20,9 +20,9 @@ const verifyCallback = (req, resolve, reject, requiredRights) => async (err, use
   resolve();
 };
 
-const auth = (...requiredRights) => async (req, res, next) => {
+const auth = () => async (req, res, next) => {
   return new Promise((resolve, reject) => {
-    passport.authenticate('jwt', { session: false }, verifyCallback(req, resolve, reject, requiredRights))(req, res, next);
+    passport.authenticate('jwt', { session: false }, verifyCallback(req, resolve, reject))(req, res, next);
   })
     .then(() => next())
     .catch((err) => next(err));

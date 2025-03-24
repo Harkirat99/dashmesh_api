@@ -15,7 +15,15 @@ const objectId = (value, helpers) => {
     return value;
   };
   
+  const number = (value, helpers) => {
+    if ( !value.match(/^[0-9]{10}$/)) {
+      return helpers.message('Phone number must have 10 digits.');
+    }
+    return value;
+  };
+  
   module.exports = {
     objectId,
     password,
+    number
   };
