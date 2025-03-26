@@ -53,7 +53,7 @@ if (config.env !== 'test') {
   }
   
   // v1 api routes
-  app.use('/v1', routes);
+  app.use('/api/v1', routes);
   
   // send back a 404 error for any unknown api request
   app.use((req, res, next) => {
