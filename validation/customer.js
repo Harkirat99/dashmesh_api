@@ -6,7 +6,7 @@ const create = {
     lastName: Joi.string(),
     fatherName: Joi.string(),
     number: Joi.string().required().custom(number),
-    alternateNumber: Joi.string().custom(number),
+    alternateNumber: Joi.string().allow("").custom(number),
     address: Joi.string().required(),
     status: Joi.string().required().valid('active', 'inactive'),
   }),
