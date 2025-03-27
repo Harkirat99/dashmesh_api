@@ -38,11 +38,18 @@ const detail = catchAsync(async (req, res) => {
             }
           },
           {
-            $unwind: {
-              path: "$transactions",
-              preserveNullAndEmptyArrays: true
-            },
-          },
+            $addFields: {
+                paidAmount: { 
+                    $sum: "$transactions.amount" 
+                }
+            }
+        },
+          // {
+          //   $unwind: {
+          //     path: "$transactions",
+          //     preserveNullAndEmptyArrays: true
+          //   },
+          // },
           {
             $lookup: {
               from: "orders",
@@ -52,23 +59,29 @@ const detail = catchAsync(async (req, res) => {
             }
           },
           {
-            $unwind: {
-              path: "$order",
-              preserveNullAndEmptyArrays: true
-            },
-          },
+            $addFields: {
+                totalAmount: { 
+                    $sum: "$order.actualPrice" 
+                }
+            }
+        },
+          // {
+          //   $unwind: {
+          //     path: "$order",
+          //     preserveNullAndEmptyArrays: true
+          //   },
+          // },
           {
-            
-            $group: {
-              _id: "$_id",
-              firstName: { $first: "$firstName" },
-              lastName: { $first: "$lastName" },
-              fatherName: { $first: "$fatherName" },
-              number: { $first: "$number" },
-              alternateNumber: { $first: "$alternateNumber" },
-              address: { $first: "$address" },
-              paidAmount: { $sum: "$transactions.amount" },
-              totalAmount: { $sum: "$order.actualPrice" }
+            $project: {
+              _id: 1,
+              firstName: 1,
+              lastName: 1,
+              fatherName: 1,
+              number: 1,
+              alternateNumber: 1,
+              address: 1,
+              paidAmount: 1,
+              totalAmount: 1
             }
           }
     ]);
