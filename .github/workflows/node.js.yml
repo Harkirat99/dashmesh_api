@@ -26,5 +26,6 @@ jobs:
     - run: npm ci
     - run: | 
           touch .env
-          echo "${{ secrets.Production }}" > .env
+          echo "${{ secrets.PRODUCTION }}" | awk 'BEGIN {RS="\\r?\\n"; ORS="\n"} {print}' > .env
+          cat .env  # Verify content
     - run: pm2 restart Backend
