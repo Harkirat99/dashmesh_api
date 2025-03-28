@@ -14,9 +14,22 @@ const index = catchAsync(async (req, res) => {
     return res.status(200).send(orders);
 });
 
+const globalOrders = catchAsync(async (req, res) => {
+    const filter = pick(req.query, ['customer']);
+    const search = searchFilter(req.query.search, ["name"]);
+
+    const orders = await Order.find(Object.assign(filter, search)).populate({
+        path: "customer",
+        select: "firstName lastName"
+    }).sort({'createdAt': -1});
+
+    return res.status(200).send(orders);
+});
+
 
 const create = catchAsync(async (req, res) => {
     const input = req.body;
+
     const payload = input.items.map((item) => {
         return {
             user: req.user,
@@ -33,5 +46,6 @@ const create = catchAsync(async (req, res) => {
 
 module.exports = {
     create,
-    index
+    index,
+    globalOrders
 };

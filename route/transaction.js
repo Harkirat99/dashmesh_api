@@ -8,5 +8,6 @@ const router = express.Router();
 
 router.post('/', auth(), validate(transactionValidation.create), transactionController.create);
 router.get('/', auth(), transactionController.index);
+router.get('/global', auth(), transactionController.globalTransactions);
 
 module.exports = router;
