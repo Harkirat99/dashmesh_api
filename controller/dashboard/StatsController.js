@@ -5,7 +5,6 @@ const stats = catchAsync(async (req, res) => {
     const { startDate, endDate } = req.query;
     const totalSales = await getTotalSales(startDate, endDate);
     const totalCollected = await getTotalCollected(startDate, endDate);
-    console.log(totalCollected)
     return res.status(200).send({
         collected: totalCollected?.amount,
         sale: totalSales?.totalSales,
