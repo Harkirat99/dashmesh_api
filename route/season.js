@@ -8,5 +8,7 @@ const router = express.Router();
 
 router.post('/', auth(), validate(seasonValidation.create), SeasonController.create);
 router.get('/', auth(), SeasonController.index);
+router.get('/dropdown', auth(), SeasonController.dropdown);
+
 
 module.exports = router;
