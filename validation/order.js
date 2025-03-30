@@ -11,8 +11,8 @@ const create = {
             quantity: Joi.number().required().min(1),
             unit: Joi.string().required().valid("mg", "g", "kg", "ml", "l", "ton"),
             unitAmount: Joi.number().min(1).required(),
-            basePrice: Joi.number().positive().min(1).label('Base Price'),
-            actualPrice: Joi.number().positive().required().min(1).label('Actual Price'),
+            price: Joi.number().positive().min(1).label('Price'),
+            // actualPrice: Joi.number().positive().required().min(1).label('Actual Price'),
         })
       ).min(1).required().label('Items')
   }),

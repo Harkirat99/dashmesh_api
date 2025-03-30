@@ -31,13 +31,14 @@ const orderSchema = mongoose.Schema(
     unitAmount: {
       type: Number,
     },
-    basePrice: {
-      type: Number,
-    },
-    actualPrice: {
+    price: {
       type: Number,
       require: true,
     },
+    // actualPrice: {
+    //   type: Number,
+    //   require: true,
+    // },
     siblingId: {
         type: String,
         require: true,
