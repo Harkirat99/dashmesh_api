@@ -1,46 +1,37 @@
 const mongoose = require("mongoose");
 const { toJSON, paginate } = require("./plugin");
 
-const productSchema = mongoose.Schema(
+const stockSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "User",
       required: true,
     },
-    stock: {
+    supplier: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: "Stock",
+      ref: "Supplier",
       required: true,
     },
-    name: {
-      type: String,
-      required: true,
-    },
-    size: {
-      type: Number,
-      required: true,
-    },
-    unit: {
-      type: String,
-      enum: ["mg", "gm", "kg", "ml", "ltr", "ton"],
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-    },
-    leftQuantity: {
-      type: Number,
-    },
-    salt: {
-      type: String,
-    },
-    expiry: {
+    date: {
       type: Date,
+      required: true,
+    },
+    orderValue: {
+      type: Number,
+      required: true,
+    },
+    taxAmount: {
+      type: Number,
+      required: true,
+    },
+    additionalCharges: {
+      type: Number,
+      required: true,
+    },
+    grandTotal: {
+      type: Number,
+      required: true,
     },
   },
   {
@@ -49,12 +40,12 @@ const productSchema = mongoose.Schema(
 );
 
 // add plugin that converts mongoose to json
-productSchema.plugin(toJSON);
-productSchema.plugin(paginate);
+stockSchema.plugin(toJSON);
+stockSchema.plugin(paginate);
 
 /**
- * @typedef Product
+ * @typedef Season
  */
-const Product = mongoose.model("Product", productSchema);
+const Stock = mongoose.model("Stock", stockSchema);
 
-module.exports = Product;
+module.exports = Stock;
