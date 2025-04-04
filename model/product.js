@@ -13,6 +13,11 @@ const productSchema = mongoose.Schema(
       ref: "Stock",
       required: true,
     },
+    supplier: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Supplier",
+      required: true,
+    },
     name: {
       type: String,
       required: true,

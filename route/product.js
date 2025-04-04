@@ -8,5 +8,6 @@ const router = express.Router();
 
 router.post('/', auth(), validate(productValidation.create), ProductController.create);
 router.get('/', auth(), ProductController.index);
+router.get('/dropdown', auth(), ProductController.dropdown);
 
 module.exports = router;

@@ -17,8 +17,18 @@ const create = catchAsync(async (req, res) => {
     return res.status(status.CREATED).send(product);
 });
 
+const dropdown = catchAsync(async (req, res) => {
+    const products = await Product.find({
+        leftQuantity: {
+            $gte: 0
+        }
+    }).select("name size unit price leftQuantity");
+    return res.status(status.CREATED).send(products);
+});
+
 
 module.exports = {
     create,
-    index
+    index,
+    dropdown
 };
