@@ -44,12 +44,6 @@ const detail = catchAsync(async (req, res) => {
                 }
             }
         },
-          // {
-          //   $unwind: {
-          //     path: "$transactions",
-          //     preserveNullAndEmptyArrays: true
-          //   },
-          // },
           {
             $lookup: {
               from: "orders",
@@ -60,17 +54,17 @@ const detail = catchAsync(async (req, res) => {
           },
           {
             $addFields: {
-                totalAmount: { 
-                    $sum: "$order.actualPrice" 
+              totalAmount: {
+                $sum: {
+                  $map: {
+                    input: "$order",
+                    as: "o",
+                    in: { $multiply: ["$$o.price", "$$o.quantity"] }
+                  }
                 }
+              }
             }
-        },
-          // {
-          //   $unwind: {
-          //     path: "$order",
-          //     preserveNullAndEmptyArrays: true
-          //   },
-          // },
+          },
           {
             $project: {
               _id: 1,

@@ -17,28 +17,25 @@ const orderSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
-    name: {
-      type: String,
-      require: true,
+    product: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Product",
+      required: true,
     },
     quantity: {
       type: Number,
     },
     unit: {
       type: String,
-      enum: ["mg", "g", "kg", "ml", "l", "ton"],
+      enum: ["mg", "gm", "kg", "ml", "ltr", "ton"],
     },
-    unitAmount: {
+    size: {
       type: Number,
     },
     price: {
       type: Number,
       require: true,
     },
-    // actualPrice: {
-    //   type: Number,
-    //   require: true,
-    // },
     siblingId: {
         type: String,
         require: true,

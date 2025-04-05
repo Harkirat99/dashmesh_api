@@ -8,7 +8,11 @@ const index = catchAsync(async (req, res) => {
     const filter = pick(req.query, ['status', 'customer']);
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const search = searchFilter(req.query.search, ["name"]);
-    const products = await Product.paginate(Object.assign(filter, search), options);
+    const updateOptions = {
+        ...options,
+        populate: "supplier"
+    }
+    const products = await Product.paginate(Object.assign(filter, search), updateOptions);
     return res.status(200).send(products)
 });
 
