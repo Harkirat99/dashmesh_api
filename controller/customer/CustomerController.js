@@ -5,6 +5,7 @@ const ApiError = require("../../utils/ApiError");
 const pick = require("../../utils/pick");
 const searchFilter = require("../../utils/searchFilter");
 const { ObjectId } = require("mongodb");
+const moment = require("moment");
 
 const index = catchAsync(async (req, res) => {
   const filter = pick(req.query, ["status"]);
@@ -89,9 +90,11 @@ const detail = catchAsync(async (req, res) => {
 
 const ledger = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const seasonStart = new Date("2025-01-01");
-  const seasonEnd = new Date("2025-05-31");
+  const { startDate, endDate } = req.query;
+  const seasonStart = new Date(moment(startDate).format("YYYY-MM-DD"));
+  const seasonEnd = new Date(moment(endDate).format("YYYY-MM-DD"));
 
+  console.log(seasonStart);
   const [customer] = await Customer.aggregate([
     {
       $match: { _id: new ObjectId(id) },
@@ -109,10 +112,26 @@ const ledger = catchAsync(async (req, res) => {
     {
       $lookup: {
         from: "orders",
-        localField: "_id",
-        foreignField: "customer",
-        as: "orders",
-      },
+        let: { customerId: "$_id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$customer", "$$customerId"] } } },
+          {
+            $lookup: {
+              from: "products",
+              localField: "product", // assuming product is stored as ObjectId in "product"
+              foreignField: "_id",
+              as: "productDetails"
+            }
+          },
+          {
+            $unwind: {
+              path: "$productDetails",
+              preserveNullAndEmptyArrays: true // optional: if you want to keep orders even if product not found
+            }
+          },
+        ],
+        as: "orders"
+      }
     },
     // Add season-based fields
     {
@@ -129,6 +148,7 @@ const ledger = catchAsync(async (req, res) => {
             },
           },
         },
+
         seasonOrders: {
           $filter: {
             input: "$orders",
@@ -212,11 +232,21 @@ const ledger = catchAsync(async (req, res) => {
       },
     },
   ]);
-  const newOrders = await joinOrders(customer?.seasonOrders);
 
-  console.log("balanceBeforeSeason", customer?.balanceBeforeSeason)
+
+  const newOrders = await joinOrders(customer?.seasonOrders);
   const entities = await joinTransactionsOrders(newOrders, customer?.seasonTransactions, customer?.balanceBeforeSeason);
-  return res.status(200).send(entities);
+  // const sortedItems = entities?.sort((a, b) => b?.date - a?.date);
+
+  return res.status(200).send({
+    metrics: {
+        name: customer?.firstName + " " + customer?.lastName,
+        balanceBeforeSeason: customer?.balanceBeforeSeason,
+        balanceInSeason: customer?.balanceInSeason,
+        currentBalance: customer?.currentBalance 
+    },
+    records: entities.reverse()
+  });
 });
 
 
@@ -228,6 +258,7 @@ const joinOrders = async (orders) => {
         entities[index].items.push({
           product: order?.product,
               unit: order?.unit,
+              name: order?.productDetails?.name,
               size: order?.size,
               price: order?.price,
               _id: order?._id
@@ -242,6 +273,7 @@ const joinOrders = async (orders) => {
           type: "order",
           items: [
             {
+              name: order?.productDetails?.name,
               product: order?.product,
               unit: order?.unit,
               size: order?.size,
@@ -257,9 +289,7 @@ const joinOrders = async (orders) => {
 
 const joinTransactionsOrders = (orders, transactions, balanceBeforeSeason = 0) => {
   const combined = [...orders, ...transactions].sort((a, b) => a?.date - b?.date);
-
   let prevBalance = balanceBeforeSeason;
-
   return combined.map((item) => {
     if(item?.type == "order") {
       // Add to balance
@@ -273,6 +303,7 @@ const joinTransactionsOrders = (orders, transactions, balanceBeforeSeason = 0) =
       prevBalance -= item?.amount;
       return {
         ...item,
+        type: "transaction",
         balance: prevBalance
       }
     }
