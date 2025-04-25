@@ -7,3 +7,4 @@ module.exports.Season = require('./season');
 module.exports.Supplier = require('./supplier');
 module.exports.Product = require('./product');
 module.exports.Stock = require('./stock');
+module.exports.Expense = require('./expense');
