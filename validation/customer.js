@@ -4,7 +4,7 @@ const create = {
   body: Joi.object().keys({
     firstName: Joi.string().required(),
     lastName: Joi.string(),
-    fatherName: Joi.string(),
+    fatherName: Joi.string().allow(""),
     number: Joi.string().required().custom(number),
     alternateNumber: Joi.string().allow("").custom(number),
     address: Joi.string().required(),

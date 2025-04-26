@@ -38,7 +38,7 @@ const globalOrders = catchAsync(async (req, res) => {
 const create = catchAsync(async (req, res) => {
     const input = req.body;
     const payload = [];
-
+    const siblingId = uuidv4();
     for (const item of input.items) {
         const product = await Product.findById(item.product);
     
@@ -55,7 +55,7 @@ const create = catchAsync(async (req, res) => {
             user: req.user,
             customer: input.customer,
             date: moment(input?.date).toISOString(),
-            siblingId: uuidv4(),
+            siblingId: siblingId,
             ...item
         });
     }

@@ -114,6 +114,7 @@ const ledger = catchAsync(async (req, res) => {
         let: { customerId: "$_id" },
         pipeline: [
           { $match: { $expr: { $eq: ["$customer", "$$customerId"] } } },
+          { $sort: { createdAt: -1 } }, // Sort by creation date descending
           {
             $lookup: {
               from: "products",
@@ -124,7 +125,7 @@ const ledger = catchAsync(async (req, res) => {
           },
           {
             $unwind: {
-              path: "$productDetails",
+              path: "$productDetails", 
               preserveNullAndEmptyArrays: true // optional: if you want to keep orders even if product not found
             }
           },
@@ -258,25 +259,27 @@ const joinOrders = async (orders) => {
           product: order?.product,
               unit: order?.unit,
               name: order?.productDetails?.name,
+              quantity: order?.quantity,
               size: order?.size,
-              price: order?.price,
+              price: order?.price * order?.quantity,
               _id: order?._id
         });
-        entities[index].totalPrice += order?.price;
+        entities[index].totalPrice += order?.price * order?.quantity;
       }else{
         entities.push({
           date: order?.date,
-          siblingId: order?.date,
+          siblingId: order?.siblingId,
           createdAt: order?.createdAt,
-          totalPrice: order?.price,
+          totalPrice: order?.price * order?.quantity,
           type: "order",
           items: [
             {
               name: order?.productDetails?.name,
               product: order?.product,
+              quantity: order?.quantity,
               unit: order?.unit,
               size: order?.size,
-              price: order?.price,
+              price: order?.price * order?.quantity,
               _id: order?._id
             }
           ]
