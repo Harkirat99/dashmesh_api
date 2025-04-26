@@ -5,6 +5,11 @@ const orderRoute = require('./order');
 const transactionRoute = require('./transaction');
 const dashboardRoute = require('./dashboard');
 const seasonRoute = require('./season');
+const supplierRoute = require('./supplier');
+const productRoute = require('./product');
+const stockRoute = require('./stock');
+const expenseRoute = require('./expense');
+
 
 const router = express.Router();
 
@@ -32,6 +37,22 @@ const defaultRoutes = [
   {
     path: '/season',
     route: seasonRoute,
+  },
+  {
+    path: '/supplier',
+    route: supplierRoute,
+  },
+  {
+    path: '/product',
+    route: productRoute,
+  },
+  {
+    path: '/stock',
+    route: stockRoute,
+  },
+  {
+    path: '/expense',
+    route: expenseRoute,
   },
 ];
 

@@ -20,7 +20,12 @@ const transactionSchema = mongoose.Schema(
     amount: {
         type: Number,
         require: true
-    },    
+    },
+    category: {
+      type: String,
+      enum: ["discount", "intrest", "add"],
+      default: "add"
+    },
     paymentType: {
         type: String,
         enum: ["cash", "online"],
