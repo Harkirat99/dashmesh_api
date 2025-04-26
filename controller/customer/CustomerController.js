@@ -6,7 +6,7 @@ const pick = require("../../utils/pick");
 const searchFilter = require("../../utils/searchFilter");
 const { ObjectId } = require("mongodb");
 const moment = require("moment");
-
+//
 const index = catchAsync(async (req, res) => {
   const filter = pick(req.query, ["status"]);
   const search = searchFilter(req.query.search, ["firstName", "lastName"]);
@@ -117,7 +117,7 @@ const ledger = catchAsync(async (req, res) => {
           {
             $lookup: {
               from: "products",
-              localField: "product", // assuming product is stored as ObjectId in "product"
+              localField: "product",
               foreignField: "_id",
               as: "productDetails"
             }
