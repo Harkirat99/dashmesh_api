@@ -94,7 +94,6 @@ const ledger = catchAsync(async (req, res) => {
   const seasonStart = new Date(moment(startDate).format("YYYY-MM-DD"));
   const seasonEnd = new Date(moment(endDate).format("YYYY-MM-DD"));
 
-  console.log(seasonStart);
   const [customer] = await Customer.aggregate([
     {
       $match: { _id: new ObjectId(id) },
