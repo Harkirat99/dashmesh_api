@@ -27,7 +27,8 @@ const create = catchAsync(async (req, res) => {
     ...input,
     user: userId,
     orderValue: orderValue,
-    grandTotal: orderValue + input?.taxAmount + input?.additionalCharges,
+    taxAmount: (Number((input?.taxAmount)) * orderValue) / 100,
+    grandTotal: orderValue + (Number((input?.taxAmount)) * orderValue) / 100 + input?.additionalCharges,
   };
 
   const stockDetails = await Stock.create(stockPayload);
