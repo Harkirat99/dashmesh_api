@@ -21,7 +21,7 @@ const supplierSchema = mongoose.Schema(
       required: true,
     },
     account: {
-      type: Number,
+      type: String,
       required: true,
     },
     ifsc: {
