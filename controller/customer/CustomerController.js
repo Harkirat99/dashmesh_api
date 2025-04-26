@@ -117,7 +117,7 @@ const ledger = catchAsync(async (req, res) => {
           {
             $lookup: {
               from: "products",
-              localField: "product", // assuming product is stored as ObjectId in "product"
+              localField: "product",
               foreignField: "_id",
               as: "productDetails"
             }
