@@ -34,6 +34,12 @@ const productSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    taxAmount: {
+      type: Number,
+    },
+    totalPrice: {
+      type: Number,
+    },
     quantity: {
       type: Number,
       required: true,

@@ -36,6 +36,8 @@ const create = catchAsync(async (req, res) => {
   const productsPayload = input.products.map((product) => {
     return {
       ...product,
+      taxAmount: (Number((input?.taxAmount)) * product?.price) / 100,
+      totalPrice: product?.price + (Number((input?.taxAmount)) * product?.price) / 100,
       user: userId,
       stock: stockDetails?._id,
       supplier: input?.supplier,
