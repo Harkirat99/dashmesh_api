@@ -236,8 +236,7 @@ const ledger = catchAsync(async (req, res) => {
 
   const newOrders = await joinOrders(customer?.seasonOrders);
   const entities = await joinTransactionsOrders(newOrders, customer?.seasonTransactions, customer?.balanceBeforeSeason);
-  // const sortedItems = entities?.sort((a, b) => b?.date - a?.date);
-
+  const sortedItems = entities?.sort((a, b) => b?.date - a?.date);
   return res.status(200).send({
     metrics: {
         name: customer?.firstName + " " + customer?.lastName,
@@ -245,7 +244,7 @@ const ledger = catchAsync(async (req, res) => {
         balanceInSeason: customer?.balanceInSeason,
         currentBalance: customer?.currentBalance 
     },
-    records: entities.reverse()
+    records: sortedItems.reverse()
   });
 });
 

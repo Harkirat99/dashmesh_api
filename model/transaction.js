@@ -23,8 +23,8 @@ const transactionSchema = mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["discount", "intrest", "add"],
-      default: "add"
+      enum: ["discount", "intrest", "purchase"],
+      default: "purchase"
     },
     paymentType: {
         type: String,
