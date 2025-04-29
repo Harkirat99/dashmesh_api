@@ -26,7 +26,7 @@ const getTotalSales = async (startDate, endDate) => {
             $group: {
                 _id: null,
                 totalSales: { 
-                    $sum: "$price" 
+                    $sum: { $multiply: ["$price", "$quantity"] }
                 }
             }
         }
