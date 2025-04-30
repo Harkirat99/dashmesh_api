@@ -21,6 +21,21 @@ const create = catchAsync(async (req, res) => {
   return res.status(status.CREATED).send(suppliers);
 });
 
+const update = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const supplier = await Supplier.findById(id);
+  if (!supplier) {
+    throw new ApiError(status.NOT_FOUND, 'Supplier not found');
+  }
+  // Only allow specific fields to be updated
+  const allowedFields = ['name', 'number', 'alternateNumber', 'address', 'status'];
+  const updateData = pick(req.body, allowedFields);
+
+  Object.assign(supplier, updateData);
+  await supplier.save();
+  return res.status(status.OK).send(supplier);
+});
+
 const detail = catchAsync(async (req, res) => {
   const { id } = req.params;
   const [entity] = await Supplier.aggregate([
@@ -88,4 +103,5 @@ module.exports = {
   create,
   index,
   detail,
+  update
 };
