@@ -25,6 +25,25 @@ const create = catchAsync(async (req, res) => {
   return res.status(status.CREATED).send(customers);
 });
 
+const update = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const customer = await Customer.findById(id);
+  if (!customer) {
+    throw new ApiError(status.NOT_FOUND, 'Customer not found');
+  }
+  // Only allow specific fields to be updated
+  const allowedFields = ['firstName', 'lastName', 'fatherName', 'number', 'alternateNumber', 'address'];
+  const updateData = pick(req.body, allowedFields);
+  if (updateData.number && updateData.number !== customer.number) {
+    if (await Customer.isNumberTaken(updateData.number)) {
+      throw new ApiError(status.BAD_REQUEST, "Number already taken");
+    }
+  }
+
+  Object.assign(customer, updateData);
+  await customer.save();
+  return res.status(status.OK).send(customer);
+});
 const detail = catchAsync(async (req, res) => {
   const { id } = req.params;
   const [customer] = await Customer.aggregate([
@@ -316,4 +335,5 @@ module.exports = {
   index,
   detail,
   ledger,
+  update
 };
