@@ -10,7 +10,9 @@ const index = catchAsync(async (req, res) => {
     const search = searchFilter(req.query.search, ["name"]);
     const updateOptions = {
         ...options,
-        populate: "supplier"
+        populate: "supplier",
+        populate: "stock"
+
     }
     const products = await Product.paginate(Object.assign(filter, search), updateOptions);
     return res.status(200).send(products)
@@ -26,6 +28,9 @@ const dropdown = catchAsync(async (req, res) => {
         leftQuantity: {
             $gte: 0
         }
+    }).populate({
+        path: "stock",
+        select: "date"
     }).select("name size unit price leftQuantity");
     return res.status(status.CREATED).send(products);
 });
