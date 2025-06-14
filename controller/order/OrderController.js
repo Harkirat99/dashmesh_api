@@ -63,9 +63,63 @@ const create = catchAsync(async (req, res) => {
     return res.status(201).send(orders);
 });
 
+const returnOrder = catchAsync(async (req, res) => {
+    const input = req.body;
+    const order = await Order.findById(input.id);
+    if (!order) throw new Error('Order not found');
+    
+    
+});
+
+const update = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const input = req.body;
+    
+    const order = await Order.findById(id);
+    if (!order) throw new Error('Order not found');
+
+    // If quantity is being updated, we need to adjust product inventory
+    if (input.quantity && input.quantity !== order.quantity) {
+        const product = await Product.findById(order.product);
+        if (!product) throw new Error('Product not found');
+
+        // Calculate the difference in quantity
+        const quantityDiff = order.quantity - input.quantity;
+        product.leftQuantity += quantityDiff;
+
+        if (product.leftQuantity < 0) {
+            throw new Error(`Insufficient quantity for product ${product.name}`);
+        }
+        await product.save();
+    }
+
+    Object.assign(order, input);
+    await order.save();
+    return res.status(200).send(order);
+});
+
+const remove = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    
+    const order = await Order.findById(id);
+    if (!order) throw new Error('Order not found');
+
+    // Return the quantity back to product inventory
+    const product = await Product.findById(order.product);
+    if (product) {
+        product.leftQuantity += order.quantity;
+        await product.save();
+    }
+
+    await Order.findByIdAndDelete(id);
+    
+    return res.status(200).send({ message: 'Order deleted successfully' });
+});
 
 module.exports = {
     create,
     index,
-    globalOrders
+    globalOrders,
+    update,
+    remove
 };

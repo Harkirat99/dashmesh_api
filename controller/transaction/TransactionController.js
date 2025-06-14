@@ -16,6 +16,26 @@ const create = catchAsync(async (req, res) => {
     return res.status(status.CREATED).send(orders);
 });
 
+const update = catchAsync(async (req, res) => {
+    const updateData = pick(req.body, ['date', 'amount', 'category', 'paymentType']);
+    const transaction = await Transaction.findByIdAndUpdate(
+        req.params.transactionId,
+        updateData,
+        { new: true, runValidators: true }
+    );
+    if (!transaction) {
+        return res.status(status.NOT_FOUND).send({ message: 'Transaction not found' });
+    }
+    return res.status(200).send(transaction);
+});
+
+const remove = catchAsync(async (req, res) => {
+    const transaction = await Transaction.findByIdAndDelete(req.params.transactionId);
+    if (!transaction) {
+        return res.status(status.NOT_FOUND).send({ message: 'Transaction not found' });
+    }
+    return res.status(status.NO_CONTENT).send();
+});
 
 const globalTransactions = catchAsync(async (req, res) => {
     const filter = pick(req.query, ['customer']);
@@ -30,5 +50,7 @@ const globalTransactions = catchAsync(async (req, res) => {
 module.exports = {
     create,
     index,
+    update,
+    remove,
     globalTransactions
 };

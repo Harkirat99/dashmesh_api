@@ -9,5 +9,7 @@ const router = express.Router();
 router.post('/', auth(), validate(transactionValidation.create), transactionController.create);
 router.get('/', auth(), transactionController.index);
 router.get('/global', auth(), transactionController.globalTransactions);
+router.patch('/:transactionId', auth(), validate(transactionValidation.update), transactionController.update);
+router.delete('/:transactionId', auth(), validate(transactionValidation.deleteTransaction), transactionController.remove);
 
 module.exports = router;
